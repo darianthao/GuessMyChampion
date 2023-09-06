@@ -1,8 +1,12 @@
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import java.net.URL
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 fun main(args: Array<String>) {
@@ -19,7 +23,34 @@ fun main(args: Array<String>) {
     val myChampionGson = GsonBuilder().create()
     val myChampionArray = myChampionGson.fromJson<ArrayList<String>>(jsonArrayString, object : TypeToken<ArrayList<String>>(){}.type)
 
-    val randomizer = Randomizer()
-    println(myChampionArray[randomizer.randomize()])
+
+    // Create an object of scanner class
+    var stopper: Boolean = true
+
+    while(stopper) {
+        val randomizer = Randomizer()
+        val randomChampionNumber: Int = randomizer.randomize()
+
+        val selectedChampionInfo = gson.fromJson(responseJSONObject.data?.get(myChampionArray[randomChampionNumber]), Champion::class.java)
+        val selectedChampionName: String = myChampionArray[randomChampionNumber].uppercase()
+
+        var input = Scanner(System.`in`)
+        println("Guess my Champion:")
+        println(selectedChampionInfo.title)
+        print("Enter: ")
+
+        var championGuess: String = input.next().uppercase()
+        if (championGuess == selectedChampionName) {
+            println("You got it! Try again?: ")
+            input = Scanner(System.`in`)
+            if (input.next().uppercase() == "NO")
+                stopper = false
+        }
+        else {
+            println("You got it wrong, want to try again?")
+            if (input.next().uppercase() == "NO")
+                stopper = false
+        }
+    }
 
 }
